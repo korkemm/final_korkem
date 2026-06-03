@@ -1,13 +1,9 @@
-
-
+```sql
 CREATE DATABASE dental_clinic_db;
-
 
 CREATE SCHEMA dental_clinic;
 
 SET search_path TO dental_clinic;
-
-
 
 CREATE TABLE insurance_plans (
     plan_id SERIAL PRIMARY KEY,
@@ -17,8 +13,6 @@ CREATE TABLE insurance_plans (
     monthly_cost NUMERIC(10,2) NOT NULL
         CHECK (monthly_cost >= 0)
 );
-
-
 
 CREATE TABLE patients (
     patient_id SERIAL PRIMARY KEY,
@@ -49,8 +43,6 @@ CREATE TABLE dentists (
     license_number VARCHAR(50) NOT NULL UNIQUE
 );
 
-
-
 CREATE TABLE procedures (
     procedure_id SERIAL PRIMARY KEY,
     procedure_name VARCHAR(100) NOT NULL UNIQUE,
@@ -59,7 +51,6 @@ CREATE TABLE procedures (
     duration_minutes INT NOT NULL
         CHECK (duration_minutes > 0)
 );
-
 
 CREATE TABLE appointments (
     appointment_id SERIAL PRIMARY KEY,
@@ -106,7 +97,6 @@ CREATE TABLE appointment_procedures (
         ON DELETE RESTRICT
 );
 
--
 CREATE TABLE invoices (
     invoice_id SERIAL PRIMARY KEY,
     appointment_id INT NOT NULL UNIQUE,
@@ -137,25 +127,22 @@ CREATE TABLE treatment_history (
         ON DELETE RESTRICT
 );
 
--- 1. ADD COLUMN
+
 ALTER TABLE patients
 ADD COLUMN emergency_contact VARCHAR(100);
 
--- 2. RENAME COLUMN
 ALTER TABLE appointments
 RENAME COLUMN notes TO appointment_notes;
 
--- 3. ALTER COLUMN TYPE
 ALTER TABLE patients
 ALTER COLUMN phone TYPE VARCHAR(25);
 
--- 4. SET DEFAULT
 ALTER TABLE appointments
 ALTER COLUMN status SET DEFAULT 'Scheduled';
 
--- 5. ADD CONSTRAINT
 ALTER TABLE dentists
 ADD CONSTRAINT unique_full_name UNIQUE(full_name);
+
 
 -- insurance_plans
 INSERT INTO insurance_plans (
@@ -180,12 +167,12 @@ INSERT INTO patients (
 )
 VALUES
 (
-    'Aruzhan',
-    'Sadykova',
+    'Korkem',
+    'Igilik',
     'Female',
-    '2001-04-12',
-    '+77015554433',
-    'aruzhan@mail.com',
+    '2005-03-15',
+    '+77010000001',
+    'korkem@mail.com',
     (
         SELECT plan_id
         FROM insurance_plans
@@ -193,16 +180,42 @@ VALUES
     )
 ),
 (
-    'Nursultan',
-    'Bekov',
-    'Male',
-    '1998-11-20',
-    '+77017778899',
-    'nursultan@mail.com',
+    'Aktoty',
+    'Shahmet',
+    'Female',
+    '2005-06-20',
+    '+77010000002',
+    'aktoty@mail.com',
     (
         SELECT plan_id
         FROM insurance_plans
         WHERE provider_name = 'Smile Protect'
+    )
+),
+(
+    'Arnur',
+    'Kamai',
+    'Male',
+    '2004-09-10',
+    '+77010000003',
+    'arnur@mail.com',
+    (
+        SELECT plan_id
+        FROM insurance_plans
+        WHERE provider_name = 'HealthDent Premium'
+    )
+),
+(
+    'Aruzhan',
+    'Tolegenova',
+    'Female',
+    '2005-01-25',
+    '+77010000004',
+    'aruzhan@mail.com',
+    (
+        SELECT plan_id
+        FROM insurance_plans
+        WHERE provider_name = 'DentalCare Plus'
     )
 );
 
@@ -216,14 +229,14 @@ INSERT INTO dentists (
 )
 VALUES
 (
-    'Dr. Aigerim Omarova',
+    'Dr. Ermekov Dias',
     'Orthodontist',
     850000,
     '2026-02-15',
     'DNT-2026-001'
 ),
 (
-    'Dr. Timur Askarov',
+    'Dr. Rakhym Kundyz',
     'Therapist',
     720000,
     '2026-03-10',
@@ -254,7 +267,7 @@ VALUES
     (
         SELECT patient_id
         FROM patients
-        WHERE phone = '+77015554433'
+        WHERE phone = '+77010000001'
     ),
     (
         SELECT dentist_id
@@ -269,7 +282,7 @@ VALUES
     (
         SELECT patient_id
         FROM patients
-        WHERE phone = '+77017778899'
+        WHERE phone = '+77010000002'
     ),
     (
         SELECT dentist_id
@@ -355,7 +368,7 @@ VALUES
     (
         SELECT patient_id
         FROM patients
-        WHERE phone = '+77015554433'
+        WHERE phone = '+77010000001'
     ),
     'Mild plaque buildup',
     'Professional cleaning recommended every 6 months'
@@ -364,7 +377,7 @@ VALUES
     (
         SELECT patient_id
         FROM patients
-        WHERE phone = '+77017778899'
+        WHERE phone = '+77010000002'
     ),
     'Deep tooth infection',
     'Root canal successfully completed'
@@ -378,6 +391,7 @@ WHERE procedure_name = 'Root Canal';
 UPDATE appointments
 SET status = 'Completed'
 WHERE appointment_id = 1;
+
 
 DELETE FROM appointments
 WHERE status = 'Cancelled';
@@ -402,8 +416,8 @@ REVOKE UPDATE
 ON invoices
 FROM receptionist_role;
 
-
 SELECT * FROM patients;
 SELECT * FROM dentists;
 SELECT * FROM appointments;
 SELECT * FROM invoices;
+```
