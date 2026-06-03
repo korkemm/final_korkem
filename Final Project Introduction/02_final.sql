@@ -1,24 +1,13 @@
--- =========================================
--- FINAL PROJECT — DENTAL CLINIC DATABASE
--- Database: dental_clinic_db
--- Schema: dental_clinic
--- =========================================
 
--- =========================================
--- CREATE DATABASE & SCHEMA
--- =========================================
 
 CREATE DATABASE dental_clinic_db;
 
--- connect manually in pgAdmin before running next part
 
 CREATE SCHEMA dental_clinic;
 
 SET search_path TO dental_clinic;
 
--- =========================================
--- TABLE: insurance_plans
--- =========================================
+
 
 CREATE TABLE insurance_plans (
     plan_id SERIAL PRIMARY KEY,
@@ -29,9 +18,7 @@ CREATE TABLE insurance_plans (
         CHECK (monthly_cost >= 0)
 );
 
--- =========================================
--- TABLE: patients
--- =========================================
+
 
 CREATE TABLE patients (
     patient_id SERIAL PRIMARY KEY,
@@ -51,10 +38,6 @@ CREATE TABLE patients (
         ON DELETE SET NULL
 );
 
--- =========================================
--- TABLE: dentists
--- =========================================
-
 CREATE TABLE dentists (
     dentist_id SERIAL PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -66,9 +49,7 @@ CREATE TABLE dentists (
     license_number VARCHAR(50) NOT NULL UNIQUE
 );
 
--- =========================================
--- TABLE: procedures
--- =========================================
+
 
 CREATE TABLE procedures (
     procedure_id SERIAL PRIMARY KEY,
@@ -79,9 +60,6 @@ CREATE TABLE procedures (
         CHECK (duration_minutes > 0)
 );
 
--- =========================================
--- TABLE: appointments
--- =========================================
 
 CREATE TABLE appointments (
     appointment_id SERIAL PRIMARY KEY,
@@ -102,10 +80,6 @@ CREATE TABLE appointments (
         REFERENCES dentists(dentist_id)
         ON DELETE RESTRICT
 );
-
--- =========================================
--- TABLE: appointment_procedures
--- =========================================
 
 CREATE TABLE appointment_procedures (
     appointment_id INT NOT NULL,
@@ -132,10 +106,7 @@ CREATE TABLE appointment_procedures (
         ON DELETE RESTRICT
 );
 
--- =========================================
--- TABLE: invoices
--- =========================================
-
+-
 CREATE TABLE invoices (
     invoice_id SERIAL PRIMARY KEY,
     appointment_id INT NOT NULL UNIQUE,
@@ -153,10 +124,6 @@ CREATE TABLE invoices (
         ON DELETE CASCADE
 );
 
--- =========================================
--- TABLE: treatment_history
--- =========================================
-
 CREATE TABLE treatment_history (
     history_id SERIAL PRIMARY KEY,
     patient_id INT NOT NULL,
@@ -169,10 +136,6 @@ CREATE TABLE treatment_history (
         REFERENCES patients(patient_id)
         ON DELETE RESTRICT
 );
-
--- =========================================
--- ALTER STATEMENTS (5 different operations)
--- =========================================
 
 -- 1. ADD COLUMN
 ALTER TABLE patients
@@ -193,10 +156,6 @@ ALTER COLUMN status SET DEFAULT 'Scheduled';
 -- 5. ADD CONSTRAINT
 ALTER TABLE dentists
 ADD CONSTRAINT unique_full_name UNIQUE(full_name);
-
--- =========================================
--- INSERT DATA
--- =========================================
 
 -- insurance_plans
 INSERT INTO insurance_plans (
@@ -411,9 +370,6 @@ VALUES
     'Root canal successfully completed'
 );
 
--- =========================================
--- UPDATE EXAMPLES
--- =========================================
 
 UPDATE procedures
 SET base_price = 60000
@@ -423,19 +379,12 @@ UPDATE appointments
 SET status = 'Completed'
 WHERE appointment_id = 1;
 
--- =========================================
--- DELETE EXAMPLES
--- =========================================
-
 DELETE FROM appointments
 WHERE status = 'Cancelled';
 
 DELETE FROM treatment_history
 WHERE recorded_at < '2026-01-01';
 
--- =========================================
--- GRANT / REVOKE
--- =========================================
 
 CREATE ROLE receptionist_role;
 
@@ -453,9 +402,6 @@ REVOKE UPDATE
 ON invoices
 FROM receptionist_role;
 
--- =========================================
--- VERIFICATION QUERIES
--- =========================================
 
 SELECT * FROM patients;
 SELECT * FROM dentists;
